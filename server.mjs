@@ -112,7 +112,7 @@ const servidor = createServer(async (req, res) => {
       const temSessao = await sessaoValida(req.headers.cookie);
       if (!temSessao || caminho.startsWith('/login')) {
         const cab = { location: caminho.startsWith('/login') ? '/' : url.pathname + url.search };
-        if (!temSessao) cab['set-cookie'] = setCookie(await sign({ email: DEMO_EMAIL, name: 'Utilizador demo' }));
+        if (!temSessao) cab['set-cookie'] = setCookie(await sign({ email: DEMO_EMAIL, name: 'Utilizador demo', admin: true }));
         res.writeHead(302, cab); res.end(); return;
       }
     }

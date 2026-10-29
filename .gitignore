@@ -31,3 +31,8 @@
 !.github/
 !.github/**
 !.gitleaksignore
+# Demo estática (GitHub Pages): o código no browser e as capturas do README
+!demo/
+!demo/**
+!imagens/
+!imagens/**

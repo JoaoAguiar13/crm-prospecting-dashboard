@@ -6,7 +6,8 @@
   "scripts": {
     "verificar": "node scripts/verificar.mjs",
     "test": "node scripts/verificar.mjs && node --test test/*.test.mjs",
-    "start": "node server.mjs"
+    "start": "node server.mjs",
+    "demo": "node scripts/construir-demo.mjs --servir"
   },
   "engines": {
     "node": ">=22"

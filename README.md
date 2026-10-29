@@ -5,15 +5,41 @@ leads do CRM (Close) num mapa, numa tabela e num kanban por etapa, as campanhas
 de email e WhatsApp, as tarefas de seguimento, o enrichment de contactos e as
 conversas de WhatsApp de três remetentes, incluindo a supervisão de dois bots.
 
+**[→ Experimentar a demo](https://joaoaguiar13.github.io/crm-prospecting-dashboard/)**: corre no browser, sem instalar nada e sem login.
+
+![Kanban de leads por etapa](imagens/kanban.png)
+
 > **Versão de portfólio.** Este repositório não contém dados reais: clientes,
 > contactos, identificadores de contas e URLs internos foram retirados ou
 > substituídos por variáveis de ambiente. Para ver a plataforma a funcionar há
 > um **modo demo** com dados fictícios, que não precisa de nenhuma conta externa.
 
-## Experimentar (modo demo)
+<p>
+  <img src="imagens/tabela.png" width="49%" alt="Tabela de leads">
+  <img src="imagens/conversas.png" width="49%" alt="Conversas de WhatsApp">
+</p>
+
+## Experimentar
+
+### Online
+
+A [demo no GitHub Pages](https://joaoaguiar13.github.io/crm-prospecting-dashboard/)
+abre a plataforma com 90 leads, conversas de WhatsApp, campanhas e tarefas
+fictícios. Dá para mudar etapas, criar leads e tarefas e enviar mensagens. As
+alterações ficam só no separador e desaparecem ao recarregar a página.
+
+### No teu computador
 
 Precisa só do Node 22 ou mais recente. Não há `npm install`: o projeto não tem
 dependências.
+
+A mesma demo estática, servida localmente em <http://localhost:4173>:
+
+```bash
+npm run demo
+```
+
+Ou o servidor completo em modo demo, com o mesmo código que corre em produção:
 
 ```bash
 DEMO_MODE=1 node server.mjs
@@ -41,6 +67,31 @@ código que em produção e as escritas funcionam: mudar a etapa de um lead, cri
 leads, contactos e tarefas, enviar mensagens e assumir conversas dos bots. Tudo
 vive em memória, e reiniciar o servidor repõe os dados de partida. O mapa usa
 MapLibre e tiles públicos, por isso precisa de ligação à internet.
+
+### Como funciona a demo estática
+
+O GitHub Pages só serve ficheiros, não corre Node. A demo aproveita o facto de
+cada rota de [`api/`](api) ser um handler `Request → Response` da Web API, que
+também corre no browser:
+
+- [`demo/navegador.js`](demo/navegador.js) é carregado antes de tudo o resto.
+  Intercepta o `fetch('/api/<rota>')` da interface, chama o handler de
+  `api/<rota>.js` diretamente no browser e devolve a `Response`. Liga o
+  `DEMO_MODE`, por isso o CRM e o Twilio são simulados pelo mesmo
+  [`lib/demo.js`](lib/demo.js) do modo demo do servidor.
+- Os quatro módulos do Node que as rotas importam (`fs/promises`, `path`, `os` e
+  `crypto`) são trocados por equivalentes em [`demo/shims/`](demo/shims). Os
+  ficheiros JSON passam a viver em memória e a Web Crypto substitui o
+  `node:crypto`.
+- [`scripts/construir-demo.mjs`](scripts/construir-demo.mjs) monta o site:
+  copia as rotas e as bibliotecas, aponta os imports do Node para os
+  equivalentes, ajusta os links para funcionarem numa subpasta e confirma que
+  nenhum módulo ficou a depender do Node. Se o código mudar e o build deixar de
+  acompanhar, falha com uma frase a dizer onde.
+- O workflow [`demo.yml`](.github/workflows/demo.yml) corre os testes, constrói
+  o site e publica-o no GitHub Pages a cada push para `main`. Os ficheiros
+  gerados não ficam no repositório, por isso a demo nunca fica desatualizada em
+  relação ao código.
 
 ## O que a plataforma faz
 
@@ -130,13 +181,15 @@ Corre duas coisas:
    usadas estão definidas e que tudo o que o `package.json` refere está
    versionado. Usa `git ls-files`, por isso precisa de correr dentro de um
    repositório git.
-2. **143 testes de comportamento** com `node:test`: portão de sessão e lista de
+2. **148 testes de comportamento** com `node:test`: portão de sessão e lista de
    acessos, login por código, limites das campanhas, envio de email, mapeamento
-   dos leads do CRM, geocodificação, cache, tarefas, erros do Twilio e modo
-   demo.
+   dos leads do CRM, geocodificação, cache, tarefas, erros do Twilio, modo demo
+   e o build da demo estática. Este último constrói o site e chama as rotas
+   construídas sem o Node por baixo.
 
 O workflow em [`.github/workflows/verificar.yml`](.github/workflows/verificar.yml)
-corre o mesmo em cada push e pull request.
+corre o mesmo em cada push e pull request, e o [`demo.yml`](.github/workflows/demo.yml)
+volta a corrê-lo antes de publicar a demo.
 
 ## Estrutura
 
@@ -149,8 +202,10 @@ corre o mesmo em cada push e pull request.
 | [`lib/leads.js`](lib/leads.js), [`lib/leads-close.js`](lib/leads-close.js) | leitura, cache e geocodificação dos leads |
 | [`lib/session.js`](lib/session.js), [`lib/portao.js`](lib/portao.js), [`lib/access.js`](lib/access.js) | sessão, portão e lista de acessos |
 | [`lib/demo.js`](lib/demo.js) | modo demo: dados fictícios e simulação do CRM e do Twilio |
+| [`demo/`](demo) | a demo estática no browser: intercepção do `fetch` e equivalentes dos módulos do Node |
 | [`index.html`](index.html), [`login.html`](login.html), [`admin.html`](admin.html) | a interface |
-| [`scripts/`](scripts) | verificação, cópia de segurança e sonda de produção |
+| [`scripts/`](scripts) | build da demo estática, verificação, cópia de segurança e sonda de produção |
+| [`imagens/`](imagens) | capturas de ecrã do README |
 | [`seed-campanhas.mjs`](seed-campanhas.mjs) | cria os templates e campanhas iniciais |
 | [`n8n-sequencia-outreach.py`](n8n-sequencia-outreach.py) | registo de uma sequência antiga em n8n, desligada e substituída pela plataforma |
 | [`test/`](test) | testes de comportamento (`node --test`) |
