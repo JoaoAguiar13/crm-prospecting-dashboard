@@ -1,0 +1,16 @@
+name: verificar
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      # Verificação estática + os testes de comportamento. Os testes deixaram
+      # de precisar de segredos (põem o SESSION_SECRET e o DATA_DIR eles
+      # próprios), que era a razão de ficarem de fora.
+      - run: npm test

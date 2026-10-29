@@ -1,0 +1,4 @@
+# Falsos positivos: SESSION_SECRET inventado usado so nos testes.
+test/envio-de-template.test.mjs:generic-api-key:4
+test/auth-por-codigo.test.mjs:generic-api-key:3
+test/sessao.test.mjs:generic-api-key:7

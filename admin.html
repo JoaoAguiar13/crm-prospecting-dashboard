@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acessos · Unilinkr Prospecting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')}catch(e){}</script>
+<style>
+:root{--brand-blue:#007cb4;--brand-blue-2:#00689a;--bg:#f8f7fc;--surface:#fff;--hover:#f3f1fa;--border:#e8e5f0;--border-2:#d7d2e4;--text:#202020;--text-2:#5a5766;--text-3:#8a8797;--focus:#007cb4;--focus-ring:rgba(0,124,180,.18);--r:6px;--r-lg:8px;--err:#9b1c15;--tag-bg:#ece8f9;--tag-fg:#4b3d8f}
+html[data-theme=dark]{color-scheme:dark;--brand-blue:#3aa6de;--brand-blue-2:#5cb8e6;--bg:#141317;--surface:#1c1b21;--hover:#26252d;--border:#2a2931;--border-2:#3b3946;--text:#ecebf1;--text-2:#a9a7b5;--text-3:#7b7990;--focus:#3aa6de;--focus-ring:rgba(58,166,222,.3);--err:#f5776c;--tag-bg:rgba(107,91,210,.22);--tag-fg:#b0a3f2}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.ic{width:16px;height:16px;stroke:currentColor;stroke-width:1.75;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.hdr{height:44px;display:flex;align-items:center;gap:8px;padding:0 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+.hdr-title{display:flex;align-items:center;gap:8px;font-weight:600}
+.hdr-title .ic{color:var(--text-3)}
+.hdr-sep{width:1px;height:16px;background:var(--border-2)}
+.page{max-width:760px;margin:0 auto;padding:28px 24px}
+.sub{font-size:12px;color:var(--text-3);margin-bottom:14px}
+.card{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-lg);overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);font-size:13px}
+th{font-size:12px;font-weight:500;color:var(--text-3)}
+tr:last-child td{border-bottom:0}
+td.meta{color:var(--text-3);font-size:12px;white-space:nowrap}
+td.act{text-align:right;white-space:nowrap}
+.tag{display:inline-block;font-size:11px;padding:1px 6px;border-radius:999px;background:var(--tag-bg);color:var(--tag-fg);margin-left:6px}
+button,input{font:inherit}
+.btn{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:var(--r);border:1px solid var(--border-2);background:var(--surface);color:var(--text);box-shadow:0 1px 1px rgba(0,0,0,.03);cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--hover)}
+.btn.primary{background:var(--brand-blue);color:#fff;border-color:var(--brand-blue)}
+.btn.primary:hover{background:var(--brand-blue-2)}
+.btn.ghost{border-color:transparent;box-shadow:none;color:var(--text-3)}
+.btn.ghost:hover{color:var(--text);background:var(--hover)}
+.btn.ghost.danger:hover{color:var(--err)}
+form{display:flex;gap:8px;align-items:center;padding:12px;border-top:1px solid var(--border);background:var(--bg)}
+input[type=email]{flex:1;height:28px;padding:0 10px;border:1px solid var(--border-2);border-radius:var(--r);outline:none;background:var(--surface);color:var(--text)}
+input[type=email]:focus{border-color:var(--focus);box-shadow:0 0 0 3px var(--focus-ring)}
+label{display:flex;align-items:center;gap:4px;color:var(--text-2);white-space:nowrap}
+.msg{font-size:12px;color:var(--err);margin-top:10px;min-height:16px}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.32);align-items:center;justify-content:center;padding:20px}
+.ov-modal{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-lg);padding:20px;width:380px;max-width:100%;box-shadow:0 12px 32px rgba(0,0,0,.14)}
+.ov-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <a class="btn ghost" href="/"><svg class="ic" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>Voltar</a>
+  <div class="hdr-sep"></div>
+  <div class="hdr-title"><svg class="ic" viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="8" r="4"/></svg>Acessos</div>
+</div>
+<div class="page">
+  <div class="sub" id="sub">Contas com acesso à plataforma.</div>
+  <div class="card">
+    <table><thead><tr><th>Email</th><th>Desde</th><th></th></tr></thead><tbody id="rows"></tbody></table>
+    <form onsubmit="add(event)">
+      <input type="email" id="email" placeholder="email@exemplo.com" required>
+      <label><input type="checkbox" id="admin"> Admin</label>
+      <button class="btn primary">Adicionar</button>
+    </form>
+  </div>
+  <div class="msg" id="msg"></div>
+  <div class="sub" style="margin-top:22px">Sugestões de quem usa a plataforma. Ninguém é notificado quando chegam — lêem-se aqui.</div>
+  <div class="card"><div id="sugestoes" class="meta">A carregar…</div></div>
+</div>
+<div class="ov" id="ask-modal">
+  <div class="ov-modal">
+    <div id="ask-text"></div>
+    <div class="ov-actions"><button class="btn ghost" id="ask-cancel">Cancelar</button><button class="btn primary" id="ask-ok">OK</button></div>
+  </div>
+</div>
+<script>
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const msg=t=>document.getElementById('msg').textContent=t||'';
+function render(acl){
+  document.getElementById('sub').textContent=`Qualquer conta @${acl.domain} entra diretamente e fica aqui registada. Emails externos só entram se estiverem nesta lista.`;
+  document.getElementById('rows').innerHTML=acl.users.map(u=>`<tr>
+    <td style="white-space:nowrap">${esc(u.email)}${u.admin?'<span class="tag">admin</span>':''}</td>
+    <td class="meta">${esc(u.since||'—')}${u.by?' · por '+esc(u.by):''}</td>
+    <td class="act">
+      <button class="btn ghost" onclick="save('${esc(u.email)}',${!u.admin})">${u.admin?'Tirar admin':'Tornar admin'}</button>
+      <button class="btn ghost danger" onclick="remove('${esc(u.email)}')">Remover</button>
+    </td></tr>`).join('');
+}
+async function call(method,body){
+  msg('');
+  const r=await fetch('/api/access',{method,headers:{'content-type':'application/json'},body:body&&JSON.stringify(body)});
+  const d=await r.json();
+  if(!r.ok){msg(d.error||'Erro.');return;}
+  render(d);return d;
+}
+async function add(e){e.preventDefault();const ok=await call('POST',{email:document.getElementById('email').value,admin:document.getElementById('admin').checked});if(ok){document.getElementById('email').value='';document.getElementById('admin').checked=false;}}
+const save=(email,admin)=>call('POST',{email,admin});
+// Pop-up da plataforma (nunca diálogos nativos do browser)
+const ask=text=>new Promise(res=>{const b=document.getElementById('ask-modal');document.getElementById('ask-text').textContent=text;
+  const done=v=>{b.style.display='none';document.removeEventListener('keydown',key);res(v);};
+  const key=e=>{if(e.key==='Escape')done(false);};document.addEventListener('keydown',key);
+  document.getElementById('ask-ok').onclick=()=>done(true);document.getElementById('ask-cancel').onclick=()=>done(false);
+  b.onclick=e=>{if(e.target===b)done(false);};b.style.display='flex';});
+const remove=async email=>{if(await ask(`Remover ${email}?`))call('DELETE',{email});};
+// Sugestões: só se lêem. Sem estados nem categorias — é uma caixa, não um tracker.
+async function lerSugestoes(){
+  const el=document.getElementById('sugestoes');
+  try{
+    const r=await fetch('/api/sugestoes');const d=await r.json();
+    if(!r.ok)throw new Error(d.error||`o servidor respondeu ${r.status}`);
+    const s=d.sugestoes||[];
+    el.innerHTML=s.length?s.map(x=>`<div style="padding:8px 0;border-top:1px solid var(--border)">
+      <div style="color:var(--text);white-space:pre-wrap">${esc(x.texto)}</div>
+      <div style="margin-top:2px">${esc(x.por)} · ${esc(String(x.quando||'').slice(0,16).replace('T',' '))}</div></div>`).join('')
+      :'Ainda não há sugestões.';
+  }catch(e){el.textContent='Não consegui ler as sugestões: '+e.message;}
+}
+call('GET');
+lerSugestoes();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "unilinkr-prospecting",
+  "private": true,
+  "type": "module",
+  "dependencies": {},
+  "scripts": {
+    "verificar": "node scripts/verificar.mjs",
+    "test": "node scripts/verificar.mjs && node --test test/*.test.mjs",
+    "start": "node server.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

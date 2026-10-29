@@ -1,0 +1,33 @@
+# Ignorar tudo por omissão — só entra o que é whitelisted abaixo
+*
+
+# Ficheiros do projeto a versionar
+!README.md
+!index.html
+!.gitignore
+.vercel
+!n8n-sequencia-outreach.py
+.env*
+# Auth Google (Vercel middleware + funções)
+!package.json
+!package-lock.json
+!login.html
+!admin.html
+!api/
+!api/**
+!lib/
+!lib/**
+# Testes de comportamento (node --test) — a mesma armadilha da lista branca
+!test/
+!test/**
+.leads-cache.json
+!server.mjs
+!railway.json
+# Scripts e backups do Close (moradas / Tipo de Lead) — chaves (*.env) e geocoded.json ficam fora
+!seed-campanhas.mjs
+# Verificacao e CI — sem esta linha o git ignora o verificador EM SILENCIO (ja aconteceu)
+!scripts/
+!scripts/**
+!.github/
+!.github/**
+!.gitleaksignore
