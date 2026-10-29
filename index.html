@@ -753,7 +753,7 @@ html[data-theme=dark] .sp-bg:after{display:none}html[data-theme=dark] .sp-bg i{o
     <h2 id="w-fases">Fases (só escolas)</h2>
     <p>Campo <code>Fase Prospeção</code> no Close. Muda-se no Close.</p>
     <table><thead><tr><th>Fase</th><th>Zona</th><th>Regra</th></tr></thead><tbody>
-      <tr><td>Fase 1 · Grande Porto</td><td>Círculo tracejado de 35 km à volta da base (Silvalde, Espinho) no mapa.</td><td>Prospeta-se primeiro. Reunião presencial.</td></tr>
+      <tr><td>Fase 1 · Grande Porto</td><td>Círculo tracejado de 35 km à volta da base no mapa.</td><td>Prospeta-se primeiro. Reunião presencial.</td></tr>
       <tr><td>Fase 2 · Portugal</td><td>Fora do círculo.</td><td>Depois da Fase 1. Reunião online.</td></tr>
     </tbody></table>
 
@@ -855,7 +855,7 @@ html[data-theme=dark] .sp-bg:after{display:none}html[data-theme=dark] .sp-bg i{o
       <tr><td>Tipo (escolas)</td><td>Campo <code>Tipo de Instituição</code>: Universidade Pública/Privada, Politécnico Público/Privado, Escola Superior Pública, Ensino Superior, Instituto Privado, Escola Profissional, Escola de Tecnologia, Escola de Robótica, Instituto de Línguas, Formação Profissional, Associação/ONG, Outro. O filtro Tipo agrupa (Politécnicos = públicos e privados).</td></tr>
       <tr><td>Setor (empresas)</td><td>Campo <code>SEGMENTO - CLIENT</code>: 01 Hotelaria, 02 Retalho Alimentar, 03 Retalho Moda, 04 Outro Retalho, 05 Restaurantes &amp; Bares, 06 Festivais/Concertos/Espetáculos, 07 Catering, 08 Promoções &amp; Ativações de Marca, 09 PMEs &amp; Startups, 10 Desporto, 11 Câmaras, 12 Consultoras/Bancos, 13 Voluntariado, 14 Trabalho Temporário/Recrutamento, 15 Escolas de Formação, 16 Gabinetes de Empregabilidade, 99 Outros. A plataforma esconde o número.</td></tr>
       <tr><td>Morada</td><td>Rua + código postal + cidade quando existem no Close; senão cidade. Pin do mapa na morada, senão no centro da cidade. Uma morada escrita ou mudada diretamente no Close move o pin sozinha, em até 20 minutos (é quando a lista volta a ler o Close).</td></tr>
-      <tr><td>Distância</td><td>km em linha reta desde a base (Silvalde, Espinho; estrela no mapa).</td></tr>
+      <tr><td>Distância</td><td>km em linha reta desde a base (estrela no mapa).</td></tr>
       <tr><td>Contacto</td><td>Primeiro contacto do Close com nome e email pessoal. É a quem o email vai. "Sem pessoa" = falta adicionar. "geral" = email genérico.</td></tr>
       <tr><td>Close</td><td>Ficha do lead no Close (histórico, emails, notas, tarefas).</td></tr>
       <tr><td>Escrever email</td><td>Abre o email pré-preenchido com o template da campanha, para escrever o meio e enviar. Desativado se não houver a quem escrever (numa escola, basta a caixa geral); o motivo aparece por baixo do botão.</td></tr>
@@ -1204,6 +1204,8 @@ const SQ=20;
 function squareIcon(fill,stroke,lw){const c=document.createElement('canvas');c.width=c.height=SQ*2;const x=c.getContext('2d');x.scale(2,2);x.fillStyle=fill;x.strokeStyle=stroke;x.lineWidth=lw;x.beginPath();if(x.roundRect)x.roundRect(3,3,SQ-6,SQ-6,2.5);else x.rect(3,3,SQ-6,SQ-6);x.fill();x.stroke();return x.getImageData(0,0,SQ*2,SQ*2);}
 const SQ_SIZE=['interpolate',['linear'],['zoom'],5,0.6,10,0.85,14,1,16,1.2];
 const SQ_SIZE_SEL=['interpolate',['linear'],['zoom'],5,0.8,10,1.1,14,1.3,16,1.55];
+// As camadas de texto só podem usar fontes que o servidor de glifos da Carto serve: se uma
+// faltar (404), o MapLibre deixa de desenhar a fonte de dados inteira, pontos incluídos.
 function makeMap(divId){
   const m=new maplibregl.Map({container:divId,style:mapStyle(),center:[BASE.lng,BASE.lat],zoom:7,attributionControl:false,minZoom:4,maxZoom:18});
   m.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-right');
@@ -1213,13 +1215,13 @@ function makeMap(divId){
       // Fase 1 = raio de 35 km à volta da base; fora do círculo é Fase 2
       m.addSource('ring',{type:'geojson',data:circleLine(BASE.lng,BASE.lat,35)});
       m.addLayer({id:'ring-l',type:'line',source:'ring',paint:{'line-color':INK,'line-opacity':0.3,'line-width':1,'line-dasharray':[3,3]}});
-      m.addLayer({id:'ring-label',type:'symbol',source:'ring',layout:{'symbol-placement':'line','text-field':'FASE 1','text-font':['Open Sans Semibold','Arial Unicode MS Bold'],'text-size':11,'text-letter-spacing':0.15,'symbol-spacing':360,'text-offset':[0,-0.9],'text-keep-upright':true,'text-max-angle':60},paint:{'text-color':INK,'text-opacity':0.6,'text-halo-color':'#fff','text-halo-width':1.5}});
+      m.addLayer({id:'ring-label',type:'symbol',source:'ring',layout:{'symbol-placement':'line','text-field':'FASE 1','text-font':['Open Sans Bold','Arial Unicode MS Bold'],'text-size':11,'text-letter-spacing':0.15,'symbol-spacing':360,'text-offset':[0,-0.9],'text-keep-upright':true,'text-max-angle':60},paint:{'text-color':INK,'text-opacity':0.6,'text-halo-color':'#fff','text-halo-width':1.5}});
     }
     const el=document.createElement('div');el.className='base-marker';el.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.2 6.8.8-5 4.6 1.3 6.8L12 17.9 6 21.2l1.3-6.8-5-4.6 6.8-.8z"/></svg>';
-    new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([BASE.lng,BASE.lat]).setPopup(new maplibregl.Popup({offset:14,closeButton:false}).setHTML('<div class="base-pop">Base · Silvalde, Espinho</div>')).addTo(m);
+    new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([BASE.lng,BASE.lat]).setPopup(new maplibregl.Popup({offset:14,closeButton:false}).setHTML('<div class="base-pop">Base · ponto de referência</div>')).addTo(m);
     m.addSource('pts',{type:'geojson',data:fc(MAP_PFX),cluster:true,clusterRadius:46,clusterMaxZoom:13,promoteId:'id'});
     m.addLayer({id:'clusters',type:'circle',source:'pts',filter:['has','point_count'],paint:{'circle-color':INK,'circle-opacity':0.9,'circle-radius':['step',['get','point_count'],14,10,17,50,21],'circle-stroke-width':3,'circle-stroke-color':'rgba(26,26,26,0.14)'}});
-    m.addLayer({id:'cluster-count',type:'symbol',source:'pts',filter:['has','point_count'],layout:{'text-field':'{point_count_abbreviated}','text-font':['Open Sans Semibold','Arial Unicode MS Bold'],'text-size':11},paint:{'text-color':isDark()?'#141317':'#fff'}});
+    m.addLayer({id:'cluster-count',type:'symbol',source:'pts',filter:['has','point_count'],layout:{'text-field':'{point_count_abbreviated}','text-font':['Open Sans Bold','Arial Unicode MS Bold'],'text-size':11},paint:{'text-color':isDark()?'#141317':'#fff'}});
     // escolas = círculos (camada circle); empresas = quadrados (ícones canvas, um por etapa)
     m.on('styleimagemissing',e=>{if(SQ_IDS.includes(e.id)&&!m.hasImage(e.id))m.addImage(e.id,sqImage(e.id),{pixelRatio:2});});
     m.addLayer({id:'pts',type:'circle',source:'pts',filter:['all',['!',['has','point_count']],['==',['get','kind'],'e']],paint:{'circle-color':['get','color'],'circle-radius':['interpolate',['linear'],['zoom'],5,4,10,6,14,7.5,16,9],'circle-stroke-width':['case',['boolean',['feature-state','selected'],false],3,2],'circle-stroke-color':['case',['boolean',['feature-state','selected'],false],BLUE,'#ffffff']}});
@@ -1278,7 +1280,7 @@ function recordHtml(pfx,id){
     kv(I.tag,'Estado',estadoTag(i))+
     fields+
     kv(I.pin,'Morada',esc(moradaTxt(i)))+
-    kv(I.pin,'Distância',distTxt(eDist(i.lat,i.lng))+' de Espinho')+
+    kv(I.pin,'Distância',distTxt(eDist(i.lat,i.lng))+' da base')+
     contactsHtml(i)+
     `<div class="sec">Progresso</div><div class="seq">${steps}</div>`+
     leadTasksHtml(id)+
